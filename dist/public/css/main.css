@@ -1,0 +1,41 @@
+body{
+    margin: 0;
+}
+.nav-container{
+    
+}
+.main-navigation{
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+}
+.nav-bar{
+    height: 66px;
+    background-color: #f1f1f1;
+}
+.nav-bar span{
+    float: left;
+    line-height: 4;
+    margin: 0 0 0 140px;
+}
+.nav-bar ul{
+    float: right;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 400px;
+}
+.nav-bar ul li{
+    display: inline;
+}
+.nav-bar ul li a{
+    line-height: 4;
+    color: #000;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+.clearfix:after {
+    content: "";
+    clear: both;
+    display: block;
+}
