@@ -10,7 +10,7 @@ class App extends React.Component {
     this.state = {
       chance: 1,
       matrix: ['', '', '', '', '', '', '', '', ''],
-      winningPattern: [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 7], [0, 4, 7], [2, 4, 6]],
+      winningPattern: ['012', '345', '678', '036', '147', '257', '047', '246'],
       patternX: [],
       patternO: []
     };
@@ -26,20 +26,24 @@ class App extends React.Component {
       patternO.push(matrixId);
       matrix[matrixId] = this.player2;
     }
-    this.checkWinner();
+    this.checkWinner(matrixId);
     this.setState({ matrix, patternX, patternO, chance: this.state.chance === 1 ? 0 : 1});
   }
-  checkWinner = () => {
+  checkWinner = (matrixId) => {
+    const { chance } = this.state;
     const player1Array = this.state.patternX.sort();
     const player2Array = this.state.patternO.sort();
     var firstMoves = [];
     var secondMoves = [];
-    if (player1Array.length > 2){
-      for (var i = 0; i < player1Array.length-2; i++) {
-        firstMoves.push([player1Array[i], player1Array[i+1], player1Array[i+2]]);
+    if (player1Array.length > 2 && chance === 1) {
+      for (var i = 0 ; i < player1Array.length-2; i++) {
+        for ( var j = i+1; j < player1Array.length-1; i++) {
+          const flag = _.includes(this.state.winningPattern, ''+player1Array[i]+player1Array[j]+matrixId);
+          console.log('flag is', flag);
+        }
       }
     }
-    if (player2Array.length > 2){
+    if (player2Array.length > 2 && chance === 0){
       for (var i = 0; i < player2Array.length-2; i++) {
         secondMoves.push([player2Array[i], player2Array[i+1], player2Array[i+2]]);
       }
