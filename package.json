@@ -11,15 +11,19 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.4.3",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
     "@babel/preset-env": "^7.4.3",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",
+    "css-loader": "^3.2.0",
     "react-hot-loader": "^4.8.2",
+    "style-loader": "^1.0.0",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0",
     "webpack-dev-server": "^3.2.1"
   },
   "dependencies": {
+    "lodash": "^4.17.15",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   }
