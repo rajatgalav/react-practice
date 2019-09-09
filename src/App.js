@@ -1,6 +1,17 @@
 import React from 'react';
 import _ from 'lodash';
-import './App.css';
+import Modal, { Body, Footer } from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import './App.scss';
+
+const initialState = {
+  chance: 1,
+  matrix: ['', '', '', '', '', '', '', '', ''],
+  winningPattern: ['012', '345', '678', '036', '147', '257', '047', '246'],
+  patternX: [],
+  patternO: [],
+  winner: ''
+};
 
 class App extends React.Component {
   constructor(props){
@@ -8,12 +19,12 @@ class App extends React.Component {
     this.player1 = 'X';
     this.player2 = 'O';
     this.state = {
-      chance: 1,
-      matrix: ['', '', '', '', '', '', '', '', ''],
-      winningPattern: ['012', '345', '678', '036', '147', '257', '047', '246'],
-      patternX: [],
-      patternO: [],
-      winner: ''
+      chance: initialState.chance,
+      matrix: initialState.matrix,
+      winningPattern: initialState.winningPattern,
+      patternX: initialState.patternX,
+      patternO: initialState.patternO,
+      winner: initialState.winner
     };
   }
   divClicked = (e) => {
@@ -74,11 +85,19 @@ class App extends React.Component {
     let arrayFormat = [a, b, c].sort();
     return ''+arrayFormat[0]+arrayFormat[1]+arrayFormat[2];
   }
+  closeModel = () => {
+    this.setState({ winner: initialState.winner, patternX: initialState.patternX, pattern0: initialState.pattern0, matrix: initialState.matrix });
+  }
+  playAgain = () => {
+    this.closeModel();
+  }
+  newGame = () => {
+    this.closeModel();
+  }
   render() {
     const { matrix } = this.state;
     return (
       <div>
-        <div>{this.state.winner}</div>
         <div >
           <div style={{ display: 'flex' }}>
             <div className="game-box" id="first-row-0" onClick={this.divClicked} >{matrix[0]}</div>
@@ -96,6 +115,20 @@ class App extends React.Component {
             <div className="game-box" id="third-row-8" onClick={this.divClicked} >{matrix[8]}</div>
           </div>
         </div>
+        {
+          this.state.winner !== '' && (
+            <Modal show={this.state.winner !== ''}>
+              <Body>
+                <p><span>player1:</span><span>player2:</span></p>
+                <p><span>1</span><span>0</span></p>
+              </Body>
+              <Footer>
+                <Button variant="secondary" onClick={this.playAgain}>Play Again</Button>
+                <Button variant="primary" onClick={this.newGame}>Restart</Button>
+              </Footer>
+            </Modal>
+          )
+        }
       </div>
     )
   }
