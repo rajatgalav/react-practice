@@ -1,0 +1,6 @@
+
+export const FETCH_REPORT_TABS = 'FETCH_REPORT_TABS';
+
+export const LOGIN_USER_DETAILS = 'LOGIN_USER_DETAILS';
+
+export const LOGIN = 'LOGIN';
