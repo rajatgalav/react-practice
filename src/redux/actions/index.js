@@ -1,11 +1,10 @@
 import axios from "axios";
 
-export const getRequest = async (url, type) => {
+export async function getRequest(url, type){
   const response = await axios.get(url)
   return {
-    types: type,
+    type: type,
     payload: response
-    }
   }
 }
 
@@ -15,5 +14,4 @@ export const postRequest = async (url, type, data) => {
     types: type,
     payload: response
     }
-  };
-}
+};
