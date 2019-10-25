@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import Modal, { Body, Footer } from 'react-bootstrap/Modal';
+import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import './App.scss';
 
@@ -9,6 +9,7 @@ const initialState = {
   patternX: [],
   patternO: [],
   winner: '',
+  draw: false,
 };
 
 class App extends React.Component {
@@ -24,13 +25,15 @@ class App extends React.Component {
       patternX: [...initialState.patternX],
       patternO: [...initialState.patternO],
       winner: initialState.winner,
+      draw: initialState.draw,
     };
   }
   divClicked = (e) => {
-    var { matrix, patternX, patternO } = this.state;
+    var { matrix, patternO } = this.state;
+    var patternX = [...this.state.patternX];
+    var patternO = [...this.state.patternO];
     const matrixId = parseInt(e.target.id.substr(-1));
     
-    const winner = this.checkWinner(matrixId);
     if (this.chance === 1) {
       patternX.push(matrixId);
       matrix[matrixId] = this.player1;
@@ -39,13 +42,16 @@ class App extends React.Component {
       matrix[matrixId] = this.player2;
     }
     this.setState({ matrix });
+    const winner = this.checkWinner(matrixId);
     if (winner) {
       if (this.chance === 1) {
         this.setState({ winner: 'player1 wins' })
       } else {
         this.setState({ winner: 'player2 wins' });
       }
-    } else {
+    } else if ([...patternO, ...patternX].length === 9) {
+        this.setState({draw: true});
+    } else{
       this.setState({ patternX, patternO });
       this.chance = this.chance === 1 ? 0 : 1;
     }
@@ -82,25 +88,28 @@ class App extends React.Component {
     let arrayFormat = [a, b, c].sort();
     return ''+arrayFormat[0]+arrayFormat[1]+arrayFormat[2];
   }
-  closeModel = () => {
+  playAgain = () => {
     if(this.firstPlayerTurn)
       this.chance = 0;
     else
       this.chance = 1;
-    this.setState({ winner: initialState.winner, patternX: [...initialState.patternX], patternO: [...initialState.patternO], matrix: [...initialState.matrix] });
+    this.setState({ winner: initialState.winner, patternX: [...initialState.patternX], patternO: [...initialState.patternO], matrix: [...initialState.matrix], draw: initialState.draw });
     this.firstPlayerTurn = !this.firstPlayerTurn;
   }
-  playAgain = () => {
-    this.closeModel();
-  }
   newGame = () => {
-    this.closeModel();
+    this.chance = 1;
+    this.firstPlayerTurn = true;
+    this.setState({ winner: initialState.winner, patternX: [...initialState.patternX], patternO: [...initialState.patternO], matrix: [...initialState.matrix] });
   }
   render() {
     const { matrix } = this.state;
     return (
-      <div>
-        <div >
+      <div className="game-container">
+        <div className="player-container">
+          <span className={this.chance === 1 ? 'active' : null}>X</span>
+          <span className={this.chance === 0 ? 'active' : null}>O</span>
+        </div>
+        <div className="tic-tac-toe">
           <div style={{ display: 'flex' }}>
             <div className="game-box" id="first-row-0" onClick={this.divClicked} >{matrix[0]}</div>
             <div className="game-box" id="first-row-1" onClick={this.divClicked} >{matrix[1]}</div>
@@ -120,14 +129,26 @@ class App extends React.Component {
         {
           this.state.winner !== '' && (
             <Modal show={this.state.winner !== ''}>
-              <Body>
-                <p><span>player1:</span><span>player2:</span></p>
+              <Modal.Body>
+                <p><span>X:</span><span>O</span></p>
                 <p><span>1</span><span>0</span></p>
-              </Body>
-              <Footer>
+              </Modal.Body>
+              <Modal.Footer>
                 <Button variant="secondary" onClick={this.playAgain}>Play Again</Button>
                 <Button variant="primary" onClick={this.newGame}>Restart</Button>
-              </Footer>
+              </Modal.Footer>
+            </Modal>
+          )
+        }
+        {
+          this.state.draw && (
+            <Modal show={this.state.draw}>
+            <Modal.Body>
+                <span>Draw</span>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={this.playAgain}>Play Again</Button>
+              </Modal.Footer>
             </Modal>
           )
         }

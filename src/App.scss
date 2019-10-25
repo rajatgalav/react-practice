@@ -1,3 +1,25 @@
+.game-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    .player-container{
+        display: flex;
+        width: 23%;
+        justify-content: space-around;
+        span{
+            width: 15%;
+            border: 1px solid #dcd5d5;
+        }
+        .active{
+            background-color: #29c529;
+        }
+    }
+    .tic-tac-toe{
+        display: inline-block;
+    }
+}
+
 .game-box {
     border: 2px solid black;
     height: 100px;
