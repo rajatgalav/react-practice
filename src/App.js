@@ -8,8 +8,8 @@ const initialState = {
   matrix: ['', '', '', '', '', '', '', '', ''],
   patternX: [],
   patternO: [],
-  winner: '',
-  draw: false,
+  winner: [0, 0],
+  winStatus: '',
 };
 
 class App extends React.Component {
@@ -24,36 +24,41 @@ class App extends React.Component {
       matrix: [...initialState.matrix],
       patternX: [...initialState.patternX],
       patternO: [...initialState.patternO],
-      winner: initialState.winner,
-      draw: initialState.draw,
+      winStatus: initialState.winStatus,
+      winner: [...initialState.winner],
     };
   }
   divClicked = (e) => {
-    var { matrix, patternO } = this.state;
-    var patternX = [...this.state.patternX];
-    var patternO = [...this.state.patternO];
+    var { matrix, patternO, winner } = this.state;
     const matrixId = parseInt(e.target.id.substr(-1));
-    
-    if (this.chance === 1) {
-      patternX.push(matrixId);
-      matrix[matrixId] = this.player1;
-    } else {
-      patternO.push(matrixId);
-      matrix[matrixId] = this.player2;
-    }
-    this.setState({ matrix });
-    const winner = this.checkWinner(matrixId);
-    if (winner) {
+    if(matrix[matrixId] === '') {
+      var patternX = [...this.state.patternX];
+      var patternO = [...this.state.patternO];
+      
       if (this.chance === 1) {
-        this.setState({ winner: 'player1 wins' })
+        patternX.push(matrixId);
+        matrix[matrixId] = this.player1;
       } else {
-        this.setState({ winner: 'player2 wins' });
+        patternO.push(matrixId);
+        matrix[matrixId] = this.player2;
       }
-    } else if ([...patternO, ...patternX].length === 9) {
-        this.setState({draw: true});
-    } else{
-      this.setState({ patternX, patternO });
-      this.chance = this.chance === 1 ? 0 : 1;
+      this.setState({ matrix });
+      const winStatus = this.checkWinner(matrixId);
+      this.setState({ winStatus });
+      if (winStatus === 'win') {
+        if (this.chance === 1) {
+          winner[0] += 1;
+          // this.setState({ winner: [...this.state.winner, this.state.winner[0] + 1] })
+        } else {
+          winner[1] += 1;
+          // this.setState({ winner: [...this.state.winner, this.state.winner[1] + 1] });
+        }
+      } else if ([...patternO, ...patternX].length === 9) {
+          this.setState({winStatus: 'draw'});
+      } else{
+        this.setState({ patternX, patternO });
+        this.chance = this.chance === 1 ? 0 : 1;
+      }
     }
   }
   checkWinner = (matrixId) => {
@@ -66,7 +71,7 @@ class App extends React.Component {
           const stringformat = this.convertTostring(player1Array[i], player1Array[j], matrixId);
           const flag = _.includes(this.winningPattern, stringformat);
           if (flag) {
-            return flag;
+            return 'win';
           }
         }
       }
@@ -77,12 +82,12 @@ class App extends React.Component {
           const stringformat = this.convertTostring(player2Array[i], player2Array[j], matrixId);
           const flag = _.includes(this.winningPattern, stringformat);
           if (flag) {
-            return flag;
+            return 'win';
           }
         }
       }
     }
-    return false;
+    return '';
   }
   convertTostring = (a, b, c) => {
     let arrayFormat = [a, b, c].sort();
@@ -93,16 +98,16 @@ class App extends React.Component {
       this.chance = 0;
     else
       this.chance = 1;
-    this.setState({ winner: initialState.winner, patternX: [...initialState.patternX], patternO: [...initialState.patternO], matrix: [...initialState.matrix], draw: initialState.draw });
+    this.setState({ patternX: [...initialState.patternX], patternO: [...initialState.patternO], matrix: [...initialState.matrix], winStatus: initialState.winStatus });
     this.firstPlayerTurn = !this.firstPlayerTurn;
   }
   newGame = () => {
     this.chance = 1;
     this.firstPlayerTurn = true;
-    this.setState({ winner: initialState.winner, patternX: [...initialState.patternX], patternO: [...initialState.patternO], matrix: [...initialState.matrix] });
+    this.setState({ winner: initialState.winner, patternX: [...initialState.patternX], patternO: [...initialState.patternO], matrix: [...initialState.matrix], winStatus: initialState.winStatus });
   }
   render() {
-    const { matrix } = this.state;
+    const { matrix, winner } = this.state;
     return (
       <div className="game-container">
         <div className="player-container">
@@ -127,11 +132,11 @@ class App extends React.Component {
           </div>
         </div>
         {
-          this.state.winner !== '' && (
-            <Modal show={this.state.winner !== ''}>
+          this.state.winStatus === 'win' && (
+            <Modal show={this.state.winStatus === 'win'} className="score-board">
               <Modal.Body>
                 <p><span>X:</span><span>O</span></p>
-                <p><span>1</span><span>0</span></p>
+                <p><span>{winner[0]}</span><span>{winner[1]}</span></p>
               </Modal.Body>
               <Modal.Footer>
                 <Button variant="secondary" onClick={this.playAgain}>Play Again</Button>
@@ -141,8 +146,8 @@ class App extends React.Component {
           )
         }
         {
-          this.state.draw && (
-            <Modal show={this.state.draw}>
+          this.state.winStatus === 'draw' && (
+            <Modal show={this.state.winStatus === 'draw'}>
             <Modal.Body>
                 <span>Draw</span>
               </Modal.Body>
