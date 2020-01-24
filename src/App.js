@@ -1,21 +1,28 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
+import {Router, Route, Switch} from 'react-router-dom';
+import {createBrowserHistory} from 'history';
 import configureStore from './redux/configureStore';
 import './App.scss';
-import HomeScreen from './screens/HomeScreen';
+import route from './router';
+
+//export history to access it outside the react component
+const history = createBrowserHistory()
 
 const store = configureStore();
 class App extends Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      sampleBranch: 'Master Branch'
-    };
-  }
   render() {
     return (
       <Provider store={store}>
-        <HomeScreen />
+        <Router history={history}>
+          <Switch>
+            {
+              route.map((route, index)=>
+                <Route key={index} exact={route.exact} path={route.path} component={route.component} />
+              )
+            }
+          </Switch>
+        </Router>
       </Provider>
     )
   }

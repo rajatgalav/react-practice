@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import { login } from '../redux/actions/loginReducer';
-import {extractResponse, responseType} from '../utils/helper/index';
+import {extractResponse, responseType, setItem, getItem} from '../utils/helper/index';
 
 class HomeScreen extends Component{
   constructor(props){
     super(props);
     this.state = {
-      loginData: null
+      loginData: null,
+      inputData: ''
     }
   }
   componentDidMount(){
+    console.log('inputData', getItem('inputData'))
     this.getLoginDetails();
   }
   getLoginDetails = async () => {
@@ -21,11 +23,20 @@ class HomeScreen extends Component{
       }
     })
   }
+  handleChange = (e) => {
+    this.setState({inputData: e.target.value})
+  }
   render(){
     const {loginData} = this.state;
     return (
       <>
         <h1>HomeScreen</h1>
+        <input onChange={this.handleChange} value={this.state.inputData}/>
+        <span>{this.state.inputData}</span>
+        <button onClick={()=>{
+            setItem('inputData', this.state.inputData)
+            this.props.history.push('/page1')
+          }} >next Page</button> 
         {
           loginData &&
           <>
